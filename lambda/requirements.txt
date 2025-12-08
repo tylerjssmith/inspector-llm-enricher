@@ -1,0 +1,4 @@
+jupyter
+boto3
+pandas
+ollama
