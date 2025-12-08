@@ -1,2 +1,2 @@
-# Leverage LLMs for Vulnerability Management
-The `inspector-remediate` package leverages large language models (LLMs) to review vulnerability findings from AWS Inspector and recommend remediations.
+# Leverage AI for Vulnerability Management
+A modern cloud environment will contain many and ever-changing security vulnerabilities. While tools like Amazon Inspector can scan for these vulnerabilities, findings' descriptions and remediation recommendations are highly variable. This repo demonstrates how to leverage LLMs to explain and remediate Inspector vulnerability findings for AWS EC2 instances. Specifically, it demonstrates how Inspector findings can trigger Lambda functions, which normalize the finding details, call LLMs for remediation recommendations, and route the findings and recommendations to vulnerability managers using SNS. The repo includes both the necessary cloud architecture (`terraform/`) and code (`lambda/`).
