@@ -1,0 +1,19 @@
+# Project Name
+variable "project_name" {
+  description = "project name used for tagging and naming"
+  type        = string
+  default     = "rainydaypolitics"
+}
+
+# Region
+variable "region_name" {
+  description = "AWS region"
+  type        = string
+  default     = "us-west-2"
+}
+
+variable "alert_email" {
+  description = "email address to receive Inspector alerts"
+  type        = string
+  default     = "rainydaypoliticswebsite@gmail.com"
+}
