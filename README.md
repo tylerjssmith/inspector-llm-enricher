@@ -1,2 +1,6 @@
 # Leverage AI for Vulnerability Management
-A modern cloud environment will contain many and ever-changing security vulnerabilities. While tools like Amazon Inspector can scan for these vulnerabilities, findings' descriptions and remediation recommendations are highly variable. This repo demonstrates how to leverage LLMs to explain and remediate Inspector vulnerability findings for AWS EC2 instances. Specifically, it demonstrates how Inspector findings can trigger Lambda functions, which normalize the finding details, call LLMs for remediation recommendations, and route the findings and recommendations to vulnerability managers using SNS. The repo includes both the necessary cloud architecture (`terraform/`) and code (`lambda/`).
+Securing cloud infrastructure is a never-ending race between security teams and attackers. While tools like Amazon Inspector scan for vulnerabilities, their findings may provide only vague suggestions for remediation.
+
+This project leverage LLMs to explain and remediate Inspector vulnerability findings for AWS EC2 instances. Specifically, new Inspector findings trigger Lambda functions, which normalize the finding details, call LLMs for remediation recommendations, and route the findings and recommendations to vulnerability managers using SNS. 
+
+The repo includes both the necessary cloud architecture (`terraform/`) and code (`lambda/`).
