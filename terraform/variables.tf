@@ -17,3 +17,10 @@ variable "alert_email" {
   type        = string
   default     = "rainydaypoliticswebsite@gmail.com"
 }
+
+# Bedrock
+variable "model_name" {
+  description = "Bedrock model ID"
+  type        = string
+  default     = "amazon.titan-text-express-v1"
+}

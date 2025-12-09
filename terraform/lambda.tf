@@ -19,6 +19,7 @@ resource "aws_lambda_function" "inspector_finding_handler" {
   environment {
     variables = {
       SNS_TOPIC_ARN = aws_sns_topic.inspector_alerts.arn
+      BEDROCK_MODEL_ID = var.model_name
     }
   }
 }
@@ -66,6 +67,16 @@ resource "aws_iam_role_policy" "lambda_inspector_policy" {
           "sns:Publish"
         ],
         Resource = aws_sns_topic.inspector_alerts.arn
+      },
+
+      # Bedrock
+      {
+        Effect = "Allow",
+        Action = [
+          "bedrock:InvokeModel",
+          "bedrock:InvokeModelWithResponseStream"
+        ],
+        Resource = "arn:aws:bedrock:${var.region_name}::foundation-model/${var.model_name}"
       }
     ]
   })
