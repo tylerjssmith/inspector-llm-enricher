@@ -15,7 +15,7 @@ from botocore.exceptions import BotoCoreError, ClientError
 logger = logging.getLogger(__name__)
 
 BEDROCK_REGION = os.environ.get("AWS_REGION", "us-west-2")
-BEDROCK_MODEL_ID = os.environ.get("BEDROCK_MODEL_ID", "amazon.titan-text-express-v1")
+BEDROCK_MODEL_ID = os.environ.get("BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20241022-v2:0")
 
 config = Config(
     retries={'max_attempts': 3, 'mode': 'adaptive'}
@@ -71,7 +71,7 @@ def normalize_finding_for_llm(event: Dict[str, Any]) -> Dict[str, Any]:
         # Get platform/OS information
         platform = aws_ec2_instance.get("platform")
         image_id = aws_ec2_instance.get("imageId")
-
+        
         return {
             "vulnerability_id": pvd.get("vulnerabilityId", "N/A"),
             "title": title,
@@ -105,10 +105,11 @@ def build_prompt_from_finding(finding: Dict[str, Any]) -> str:
     
     return (
         "You are an experienced cloud security engineer.\n\n"
+        "You are given a JSON representation of an Amazon Inspector finding for an EC2 instance."
         f"{platform_info}\n"
-        "You are given a JSON representation of an Amazon Inspector finding on an EC2 instance.\n"
         "1. Explain the vulnerability in clear, concise language.\n"
-        "2. Provide specific remediation steps, including relevant Linux commands.\n"
+        "2. Provide actionable remediation steps specific to the operating system, "
+        "including relevant Linux commands.\n"
         "3. Keep the answer under 600 words.\n\n"
         "Finding JSON:\n"
         f"{json.dumps(finding, indent=2)}"
@@ -118,7 +119,7 @@ def build_prompt_from_finding(finding: Dict[str, Any]) -> str:
 def call_llm_for_finding(event: Dict[str, Any]) -> Dict[str, str]:
     """
     Normalize Inspector2 finding, build LLM prompt, call LLM, and
-    return remediation recommendation.
+    return explanation and remediation recommendation.
     
     Args:
         event: EventBridge event containing Inspector2 finding
@@ -130,13 +131,18 @@ def call_llm_for_finding(event: Dict[str, Any]) -> Dict[str, str]:
         finding = normalize_finding_for_llm(event)
         prompt = build_prompt_from_finding(finding)
         
+        # Claude API request format
         request_body = {
-            "inputText": prompt,
-            "textGenerationConfig": {
-                "temperature": 0.3,
-                "topP": 0.9,
-                "maxTokenCount": 2048
-            }
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": 2048,
+            "temperature": 0.3,
+            "top_p": 0.9,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
         }
         
         logger.info(f"Calling Bedrock model: {BEDROCK_MODEL_ID}")
@@ -151,12 +157,13 @@ def call_llm_for_finding(event: Dict[str, Any]) -> Dict[str, str]:
         raw = response["body"].read().decode("utf-8")
         data = json.loads(raw)
         
-        results = data.get("results", [])
-        if not results:
-            logger.warning("LLM response contained no results")
+        # Claude response format
+        content = data.get("content", [])
+        if not content:
+            logger.warning("LLM response contained no content blocks")
             return {"response": "LLM generated no recommendations."}
         
-        output_text = results[0].get("outputText", "")
+        output_text = content[0].get("text", "")
         
         if not output_text or not output_text.strip():
             logger.warning("LLM returned empty output text")

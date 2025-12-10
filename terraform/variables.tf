@@ -22,5 +22,5 @@ variable "alert_email" {
 variable "model_name" {
   description = "Bedrock model ID"
   type        = string
-  default     = "amazon.titan-text-express-v1"
+  default     = "anthropic.claude-3-5-sonnet-20241022-v2:0"
 }
