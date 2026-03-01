@@ -10,7 +10,7 @@ Amazon Inspector continuously scans EC2 instances for new vulnerabilities. A new
 </p>
 
 ## Prompt Injection Mitigation
-Inspector findings contain fields sourced from external vulnerability databases and package metadata. Fields may contain adversarial content designed to manipulate an LLM — a technique known as prompt injection. This project mitigates prompt-injection risk using a layered defense:
+Inspector findings contain fields sourced from external vulnerability databases and package metadata. These fields may contain adversarial content designed to manipulate an LLM — a technique known as prompt injection. This project mitigates prompt-injection risk using a layered defense:
 
 1. **Normalization:** Only structured fields with known formats are extracted from findings. Free-text fields such as vulnerability descriptions are discarded. All extracted fields are validated against strict regex patterns before use. If any field fails validation, nothing is passed to the LLM. See `normalize_finding()` in [helpers.py](src/helpers.py), which extracts and validates fields using [field_schema.json](config/field_schema.json).
 2. **System Prompt:** Validated fields are passed to the model in the user prompt. The system prompt, which is passed separately, explicitly instructs the model to treat user prompt content as untrusted external input. See `call_bedrock()` in [lambda_function.py](src/lambda_function.py), which passes [system_prompt.txt](config/system_prompt.txt).
