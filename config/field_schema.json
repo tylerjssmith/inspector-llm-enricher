@@ -1,26 +1,26 @@
 {
-    'severity': {
-        'path':    ('severity',),
-        'pattern': 'LOW|MEDIUM|HIGH|CRITICAL'
+    "severity": {
+        "path": ["severity"],
+        "pattern": "LOW|MEDIUM|HIGH|CRITICAL"
     },
-    'type': {
-        'path':    ('type',),
-        'pattern': 'PACKAGE_VULNERABILITY'
+    "type": {
+        "path": ["type"],
+        "pattern": "PACKAGE_VULNERABILITY"
     },
-    'package': {
-        'path': ['packageVulnerabilityDetails', 'vulnerablePackages', 0, 'name'],
-        'pattern': '[a-z0-9][a-z0-9+\\-.]{0,63}'
+    "package": {
+        "path": ["packageVulnerabilityDetails", "vulnerablePackages", 0, "name"],
+        "pattern": "[a-z0-9][a-z0-9+\\-.]{0,63}"
     },
-    'cve': {
-        'path':    ('packageVulnerabilityDetails', 'vulnerabilityId'),
-        'pattern': r'CVE-(199[0-9]|2[0-9]{3})-[0-9]{4,}'
+    "cve": {
+        "path": ["packageVulnerabilityDetails", "vulnerabilityId"],
+        "pattern": "CVE-(199[0-9]|2[0-9]{3})-[0-9]{4,}"
     },
-    'cvss': {
-        'path':    ('packageVulnerabilityDetails', 'cvss', 0, 'scoringVector'),
-        'pattern': r'CVSS:3\.1/AV:(P|L|A|N)/AC:(H|L)/PR:(H|L|N)/UI:(N|R)/S:(U|C)/C:(N|L|H)/I:(N|L|H)/A:(N|L|H)'
+    "cvss": {
+        "path": ["packageVulnerabilityDetails", "cvss", 0, "scoringVector"],
+        "pattern": "CVSS:3\\.1/AV:(P|L|A|N)/AC:(H|L)/PR:(H|L|N)/UI:(N|R)/S:(U|C)/C:(N|L|H)/I:(N|L|H)/A:(N|L|H)"
     },
-    'vendorCreatedAt': {
-        'path': ['packageVulnerabilityDetails', 'vendorCreatedAt'],
-        'pattern': '(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3} UTC \\d{4}'
+    "vendorCreatedAt": {
+        "path": ["packageVulnerabilityDetails", "vendorCreatedAt"],
+        "pattern": "(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3} UTC \\d{4}"
     }
 }
