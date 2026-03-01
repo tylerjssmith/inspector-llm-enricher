@@ -84,7 +84,7 @@ resource "aws_lambda_function" "findings" {
   memory_size   = var.lambda_memory_size
 
   # Placeholder — code deployed separately
-  filename      = "placeholder.zip"
+  filename      = "../config/placeholder.zip"
 
   environment {
     variables = {

@@ -1,0 +1,105 @@
+{
+    "version": "0",
+    "id": "4d621919-f1f4-4201-a0e2-37e4e330ff51",
+    "detail-type": "Inspector2 Finding",
+    "source": "aws.inspector2",
+    "account": "123456789012",
+    "time": "2024-09-04T17:00:36Z",
+    "region": "eu-central-1",
+    "resources": [
+        "i-12345678901234567"
+    ],
+    "detail": {
+        "awsAccountId": "123456789012",
+        "description": "In snapd versions prior to 2.62, snapd failed to properly check the destination of symbolic links when extracting a snap...",
+        "epss": {
+            "score": 0.00043
+        },
+        "exploitAvailable": "NO",
+        "findingArn": "arn:aws:inspector2:eu-central-1:123456789012:finding/FINDING_ID",
+        "firstObservedAt": "Wed Sep 04 16:59:44.356 UTC 2024",
+        "fixAvailable": "YES",
+        "inspectorScore": 4.8,
+        "inspectorScoreDetails": {
+            "adjustedCvss": {
+                "adjustments": [],
+                "cvssSource": "UBUNTU_CVE",
+                "score": 4.8,
+                "scoreSource": "UBUNTU_CVE",
+                "scoringVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:R/S:U/C:L/I:L/A:L",
+                "version": "3.1"
+            }
+        },
+        "lastObservedAt": "Wed Sep 04 16:59:44.476 UTC 2024",
+        "packageVulnerabilityDetails": {
+            "cvss": [
+                {
+                    "baseScore": 4.8,
+                    "scoringVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:R/S:U/C:L/I:L/A:L",
+                    "source": "UBUNTU_CVE",
+                    "version": "3.1"
+                },
+                {
+                    "baseScore": 7.3,
+                    "scoringVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H",
+                    "source": "NVD",
+                    "version": "3.1"
+                }
+            ],
+            "referenceUrls": [
+                "https://www.cve.org/CVERecord?id=CVE-2024-29069",
+                "https://ubuntu.com/security/notices/USN-6940-1"
+            ],
+            "relatedVulnerabilities": [
+                "USN-6940-1"
+            ],
+            "source": "UBUNTU_CVE",
+            "sourceUrl": "https://people.canonical.com/~ubuntu-security/cve/2024/CVE-2024-29069.html",
+            "vendorCreatedAt": "Thu Jul 25 20:15:00.000 UTC 2024",
+            "vendorSeverity": "medium",
+            "vulnerabilityId": "CVE-2024-29069",
+            "vulnerablePackages": [
+                {
+                    "arch": "ALL",
+                    "epoch": 0,
+                    "fixedInVersion": "0:2.63+22.04ubuntu0.1",
+                    "name": "snapd",
+                    "packageManager": "OS",
+                    "remediation": "apt-get update && apt-get upgrade",
+                    "version": "2.63"
+                }
+            ]
+        },
+        "remediation": {
+            "recommendation": {
+                "text": "None Provided"
+            }
+        },
+        "resources": [
+            {
+                "details": {
+                    "awsEc2Instance": {
+                        "iamInstanceProfileArn": "arn:aws:iam::123456789012:instance-profile/AmazonSSMRoleForInstancesQuickSetup",
+                        "imageId": "ami-02ff980600c693b38",
+                        "ipV4Addresses": ["1.23.456.789", "123.45.67.890"],
+                        "ipV6Addresses": [],
+                        "launchedAt": "Wed Sep 04 16:57:40.000 UTC 2024",
+                        "platform": "UBUNTU_22_04",
+                        "subnetId": "subnet-12345678",
+                        "type": "t2.small",
+                        "vpcId": "vpc-12345678"
+                    }
+                },
+                "id": "i-12345678901234567",
+                "partition": "aws",
+                "region": "eu-central-1",
+                "type": "AWS_EC2_INSTANCE"
+            }
+        ],
+        "severity": "MEDIUM",
+        "status": "CLOSED",
+        "title": "CVE-2024-29069 - snapd",
+        "type": "PACKAGE_VULNERABILITY",
+        "updatedAt": "Wed Sep 04 17:00:36.951 UTC 2024"
+    }
+}
