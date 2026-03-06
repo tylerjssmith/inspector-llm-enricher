@@ -8,8 +8,9 @@ from typing import Any, Dict, Optional
 logger = logging.getLogger(__name__)
 
 def handle_failure(
-    stage: str, 
-    finding_arn: str
+    stage: str,
+    finding_arn: str,
+    error_code: int
 ) -> Dict[str, Any]:
     """
     Handle failures.
@@ -20,25 +21,27 @@ def handle_failure(
         Stage where failure occurred
     finding_arn : str
         Finding ARN to log for review
+    error_code : int
+        HTTP status code to return
 
     Returns
     -------
     Dict[str, Any]
         Dictionary containing:
-        - 'statusCode': 400
+        - 'statusCode': error_code
         - 'body': Message indicating where failure occurred
     """
     logger.error(
-        'Stage failed', 
+        'Stage failed',
         extra={'stage': stage, 'finding_arn': finding_arn}
     )
     return {
-        'statusCode': 400,
+        'statusCode': error_code,
         'body': json.dumps({'error': f'{stage} failed'})
     }
     
 
-def get_nested(d: Dict, path: tuple) -> Any:
+def get_nested(d: Dict, path: list) -> Any:
     """
     Traverse nested dictionary using a tuple of keys to
     extract desired value.
@@ -47,7 +50,7 @@ def get_nested(d: Dict, path: tuple) -> Any:
     ----------
     d : Dict
         Dictionary to traverse
-    path : tuple
+    path : list
         Path of keys to value
 
     Returns
@@ -129,7 +132,7 @@ def make_user_prompt(normalized: Dict[str, str]) -> str:
 
 def make_email_subj(
     normalized: Dict[str, str], 
-    max_length: int = 50
+    max_length: int = 100
 ) -> str:
     """
     Make email subject line.
@@ -139,8 +142,9 @@ def make_email_subj(
     normalized : Dict[str, str]
         Normalized Inspector2 finding
         Returned by normalize_finding()
-    max_length : int, default 50
+    max_length : int, default 100
         Maximum length of subject line
+        SNS imposes a limit of 100 characters.
 
     Returns
     -------
@@ -148,9 +152,9 @@ def make_email_subj(
         Email subject line
     """
     severity = normalized.get('severity')
-    category = normalized.get('type')
+    finding_type = normalized.get('type')
 
-    subj = f'[{severity}] Inspector: {category}'
+    subj = f'[{severity}] Inspector: {finding_type}'
 
     if len(subj) > max_length:
         subj = f'{subj[:max(0, max_length - 3)]}...'

@@ -6,7 +6,6 @@ from botocore.exceptions import ClientError
 from typing import Any, Dict, Optional
 
 from helpers import (
-    get_nested,
     handle_failure,
     normalize_finding,
     make_user_prompt,
@@ -40,6 +39,9 @@ try:
         SYSTEM_PROMPT = file.read()
 except FileNotFoundError as e:
     raise RuntimeError(f'Failed to load system_prompt.txt: {e}')
+
+# Lambda
+SUPPORTED_FINDING_TYPES = ['PACKAGE_VULNERABILITY']
 
 # Bedrock
 BEDROCK_MODEL_ID = 'anthropic.claude-3-haiku-20240307-v1:0'
@@ -200,14 +202,24 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'message': f'Skipping {status} finding'
                 })
             }
-
+        
+        finding_type = finding.get('type', '').upper()
+        if finding_type not in SUPPORTED_FINDING_TYPES:
+            logger.info('Skipping non-supported type', extra={'type': finding_type})
+            return {
+                'statusCode': 200,
+                'body': json.dumps({
+                    'message': f'Skipping {finding_type} finding'
+                })
+            }
+        
         # Extract Finding ARN for Error Tracking
         finding_arn = finding.get('findingArn', 'unknown')
         
         # (1) Normalize and Sanitize Finding
         normalized = normalize_finding(finding, FINDING_SCHEMA)
         if normalized is None:
-            return handle_failure('Normalization', finding_arn)
+            return handle_failure('Normalization', finding_arn, error_code=500)
         
         # (2) Get User Prompt
         user_prompt = make_user_prompt(normalized)
@@ -220,14 +232,14 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             max_tokens=BEDROCK_MAX_TOKENS
         )
         if response is None:
-            return handle_failure('Calling Bedrock', finding_arn)
+            return handle_failure('Calling Bedrock', finding_arn, error_code=500)
     
         # (4) Send Recommendation via SNS
         email_subj = make_email_subj(normalized, SNS_SUBJECT_MAX_LENGTH)
         email_body = make_email_body(normalized, response)
 
         if not send_email_alert(email_subj, email_body, SNS_TOPIC_ARN):
-            return handle_failure('Sending SNS email', finding_arn)
+            return handle_failure('Sending SNS email', finding_arn, error_code=500)
         
         return {
             'statusCode': 200,
